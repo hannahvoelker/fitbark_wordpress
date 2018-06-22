@@ -1,10 +1,13 @@
+require('http');
 var keygetter = require("./keys.js")
 
 var id = keygetter.get_id();
 var secret = keygetter.get_secret();
 
-var authorized = false;
 
+/* this needs to change once I figure out how to store the token on Raven
+perhaps a Mongo instance... tbd */
+var authorized = false;
 
 /* authentication */ 
 if(!authorized){
@@ -28,10 +31,11 @@ requestToServer = function(access_code){
 	request.onreadystatechange = function(){
 		if (request.readyState == 4 && request.status == 200 ){
 			var elements = JSON.parse(request.responseText);
+			console.log(elements);
 		}
 		else {
 			return null;
 		}
 	}
-	request.send("response_type=client_credentials&client_id="+id+"&redirect_uri=urn:ietf:wg:oauth:2.0:oob");
+	request.send();
 }
