@@ -6,14 +6,31 @@ var secret = keygetter.get_secret();
 var authorized = false;
 
 
-/* authentication step -- unclear if I need to do this */ 
+/* authentication */ 
 if(!authorized){
 	var request = new XMLHttpRequest();
 	request.open("POST", "https://app.fitbark.com/oauth/authorize", true);
 	request.onreadystatechange = function(){
 		if (request.readyState == 4 && request.status == 200 ){
-			elements = JSON.parse(request.responseText);
-			authorized = true;
+			var access_code = request.response; // ???
+			var token = requestToServer(access_code);
+			if(token != null){
+				authorized = true;
+			}
+		}
+	}
+	request.send("response_type=client_credentials&client_id="+id+"&redirect_uri=urn:ietf:wg:oauth:2.0:oob");
+}
+
+requestToServer = function(access_code){
+	var request = new XMLHttpRequest();
+	request.open("POST", "https://app.fitbark.com/oauth/token", true);
+	request.onreadystatechange = function(){
+		if (request.readyState == 4 && request.status == 200 ){
+			var elements = JSON.parse(request.responseText);
+		}
+		else {
+			return null;
 		}
 	}
 	request.send("response_type=client_credentials&client_id="+id+"&redirect_uri=urn:ietf:wg:oauth:2.0:oob");
